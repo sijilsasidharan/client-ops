@@ -7,7 +7,7 @@ export class HealthController {
 
   @Get()
   async checkHealth(): Promise<{ status: string; db: string }> {
-    await this.prisma.client.orm.public.User.limit(1).all(); // Check database connectivity
+    await this.prisma.user.findMany({ take: 1 }); // Check database connectivity
     return { status: 'OK', db: 'Connected' };
   }
 }
