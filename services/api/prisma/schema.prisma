@@ -6,7 +6,7 @@ generator client {
 
 datasource db {
   provider = "postgresql"
-  schemas  = ["auth"]
+  schemas  = ["auth", "core"]
 }
 
 enum Role {
@@ -53,4 +53,16 @@ model Membership {
 
   @@unique([organizationId, userId])
   @@schema("auth")
+}
+
+model Client {
+  id             String   @id @default(cuid())
+  name           String
+  contactInfo    String?
+  notes          String?
+  createdAt      DateTime @default(now())
+
+  organizationId String
+
+  @@schema("core")
 }
