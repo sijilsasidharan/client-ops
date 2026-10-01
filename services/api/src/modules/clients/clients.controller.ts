@@ -1,33 +1,57 @@
-import { Controller, Delete, Get, Patch, Post } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Delete,
+  Get,
+  Param,
+  Patch,
+  Post,
+} from '@nestjs/common';
 import { ClientsService } from './clients.service';
-import { GetClientDto } from './dto/get-client.tro';
+import { CreateClientDto } from './dto/create-client.dto';
+import { UpdateClientDto } from './dto/update-client.dto';
+import { CurrentUser } from '../../auth/current-user.decorator';
+import * as authUserInterface from '../../auth/auth-user.interface';
 
 @Controller('clients')
 export class ClientsController {
   constructor(private clientsService: ClientsService) {}
 
-  @Get('all')
-  async getAllClients() {
+  @Get()
+  async getAllClients(@CurrentUser() user: authUserInterface.AuthUser) {
     return this.clientsService.getAllClients();
   }
 
   @Get(':id')
-  async getClientById(clientId: GetClientDto) {
-    return this.clientsService.getClientById(clientId.clientId);
+  async getClientById(
+    @Param('id') id: string,
+    @CurrentUser() user: authUserInterface.AuthUser,
+  ) {
+    return this.clientsService.getClientById(id, user.organizationId);
   }
 
   @Post('create')
-  async createClient(data: any) {
-    return this.clientsService.createClient(data);
+  async createClient(
+    @Body() data: CreateClientDto,
+    @CurrentUser() user: authUserInterface.AuthUser,
+  ) {
+    return this.clientsService.createClient(data, user.organizationId);
   }
 
-  @Patch('')
-  async updateClient() {
-    return this.clientsService.updateClient();
+  @Patch(':id')
+  async updateClient(
+    @Param('id') id: string,
+    @Body() data: UpdateClientDto,
+    @CurrentUser() user: authUserInterface.AuthUser,
+  ) {
+    return this.clientsService.updateClient(id, user.organizationId, data);
   }
 
-  @Delete()
-  async deleteClient() {
-    return this.clientsService.deleteClient();
+  @Delete(':id')
+  async deleteClient(
+    @Param('id') id: string,
+    @CurrentUser() user: authUserInterface.AuthUser,
+  ) {
+    return this.clientsService.deleteClient(id, user.organizationId);
   }
 }
