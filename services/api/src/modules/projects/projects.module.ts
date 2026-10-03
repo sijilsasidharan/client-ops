@@ -1,12 +1,12 @@
 import { Module } from '@nestjs/common';
 import { AuthModule } from '../../auth/auth.module';
-import { ClientsController } from './clients.controller';
-import { ClientsService } from './clients.service';
+import { ProjectsController } from './projects.controller';
+import { ProjectsService } from './projects.service';
 import { PrismaModule } from '../../prisma/prisma.module';
 
 @Module({
   imports: [AuthModule, PrismaModule], // <-- this is what resolves JwtService for the guard
-  controllers: [ClientsController],
-  providers: [ClientsService],
+  controllers: [ProjectsController],
+  providers: [ProjectsService],
 })
-export class ClientsModule {}
+export class ProjectsModule {}

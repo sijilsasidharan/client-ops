@@ -23,6 +23,7 @@ model Organization {
   createdAt DateTime @default(now())
 
   memberships Membership[]
+  projects    Project[]
 
   @@schema("auth")
 }
@@ -41,9 +42,9 @@ model User {
 }
 
 model Membership {
-  id             String   @id @default(cuid())
-  role           Role
-  createdAt      DateTime @default(now())
+  id        String   @id @default(cuid())
+  role      Role
+  createdAt DateTime @default(now())
 
   organizationId String
   organization   Organization @relation(fields: [organizationId], references: [id])
@@ -56,13 +57,38 @@ model Membership {
 }
 
 model Client {
-  id             String   @id @default(cuid())
-  name           String
-  contactInfo    String?
-  notes          String?
-  createdAt      DateTime @default(now())
+  id          String   @id @default(cuid())
+  name        String
+  contactInfo String?
+  notes       String?
+  createdAt   DateTime @default(now())
 
   organizationId String
+  projects       Project[]
+
+  @@schema("core")
+}
+
+enum ProjectStatus {
+  ACTIVE
+  ON_HOLD
+  COMPLETED
+
+  @@schema("core")
+}
+
+model Project {
+  id        String        @id @default(cuid())
+  name      String
+  status    ProjectStatus @default(ACTIVE)
+  budget    Decimal?      @db.Decimal(10, 2)
+  createdAt DateTime      @default(now())
+
+  organizationId String
+  organization   Organization @relation(fields: [organizationId], references: [id])
+
+  clientId String
+  client   Client @relation(fields: [clientId], references: [id])
 
   @@schema("core")
 }
