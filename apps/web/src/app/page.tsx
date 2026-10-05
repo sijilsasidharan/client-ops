@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import LoginPage from "./login/page";
 
 export default function Home() {
   const [health, setHealth] = useState<{ status: string; db: string } | null>(
@@ -17,7 +18,7 @@ export default function Home() {
 
   return (
     <main style={{ padding: 40, fontFamily: "sans-serif" }}>
-      <h1>Client Ops</h1>
+      {/* <h1>Client Ops</h1>
       {error && <p style={{ color: "red" }}>Error: {error}</p>}
       {health ? (
         <p>
@@ -25,7 +26,8 @@ export default function Home() {
         </p>
       ) : (
         <p>Checking backend…</p>
-      )}
+      )} */}
+      <LoginPage />
     </main>
   );
 }
