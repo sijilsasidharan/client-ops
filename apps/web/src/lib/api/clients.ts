@@ -5,7 +5,7 @@ import { ClientInput, Client } from "../schemas/clients";
 export const clientsApi = {
   getAll: () => apiFetch<Client[]>("/clients"),
   create: (data: ClientInput) =>
-    apiFetch<Client>("/clients", {
+    apiFetch<Client>("/clients/create", {
       method: "POST",
       body: JSON.stringify(data),
     }),

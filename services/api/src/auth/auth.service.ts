@@ -58,6 +58,7 @@ export class AuthService {
   async login(dto: LoginDto) {
     const user = await this.prisma.user.findUnique({
       where: { email: dto.email },
+      include: { memberships: true },
     });
 
     if (!user) {
@@ -70,7 +71,21 @@ export class AuthService {
       throw new UnauthorizedException('Invalid email or password');
     }
 
-    const accessToken = this.jwtService.sign({ userId: user.id });
+    // v1 assumption: one org per user — memberships[0]. Revisit if you add multi-org support later.
+    const membership = user.memberships[0];
+    if (!membership) {
+      throw new UnauthorizedException('User has no organization');
+    }
+
+    const payload = {
+      userId: user.id,
+      email: user.email,
+      organizationId: membership.organizationId,
+      role: membership.role,
+    };
+
+    console.log('JWT Payload:', payload); // Log the payload for debugging
+    const accessToken = this.jwtService.sign(payload);
 
     return { accessToken };
   }

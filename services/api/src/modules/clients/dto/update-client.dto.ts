@@ -13,8 +13,4 @@ export class UpdateClientDto {
   @Optional()
   @IsString()
   notes?: string;
-
-  @IsString()
-  @MinLength(2)
-  organizationId?: string;
 }

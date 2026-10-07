@@ -16,6 +16,14 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Button } from "@/components/ui/button";
 
+function toFormValues(client?: Client): ClientInput {
+  return {
+    name: client?.name ?? "",
+    contactInfo: client?.contactInfo ?? "",
+    notes: client?.notes ?? "",
+  };
+}
+
 export function ClientFormDialog({
   client,
   trigger,
@@ -27,23 +35,27 @@ export function ClientFormDialog({
   const isEdit = !!client;
   const form = useForm<ClientInput>({
     resolver: zodResolver(clientSchema),
-    defaultValues: client ?? { name: "", contactInfo: "", notes: "" },
+    defaultValues: toFormValues(client),
   });
   const createMutation = useCreateClient();
   const updateMutation = useUpdateClient();
+
+  // Load the latest values each time the dialog opens, so edits made
+  // elsewhere (or abandoned here) never show up stale.
+  function handleOpenChange(next: boolean) {
+    if (next) form.reset(toFormValues(client));
+    setOpen(next);
+  }
 
   function onSubmit(data: ClientInput) {
     const action = isEdit
       ? updateMutation.mutateAsync({ id: client!.id, data })
       : createMutation.mutateAsync(data);
-    action.then(() => {
-      setOpen(false);
-      form.reset();
-    });
+    action.then(() => setOpen(false));
   }
 
   return (
-    <Dialog open={open} onOpenChange={setOpen}>
+    <Dialog open={open} onOpenChange={handleOpenChange}>
       <DialogTrigger render={trigger} />
       <DialogContent>
         <DialogHeader>

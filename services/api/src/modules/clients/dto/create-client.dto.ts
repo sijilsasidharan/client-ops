@@ -13,8 +13,4 @@ export class CreateClientDto {
   @Optional()
   @IsString()
   notes: string;
-
-  @IsString()
-  @MinLength(2)
-  organizationId: string;
 }

@@ -38,6 +38,7 @@ export class ClientsController {
     @Body() data: CreateClientDto,
     @CurrentUser() user: authUserInterface.AuthUser,
   ) {
+    console.log(user);
     return this.clientsService.createClient(data, user.organizationId);
   }
 
