@@ -6,7 +6,7 @@ generator client {
 
 datasource db {
   provider = "postgresql"
-  schemas  = ["auth", "core"]
+  schemas  = ["auth", "core", "timetracking"]
 }
 
 enum Role {
@@ -24,6 +24,7 @@ model Organization {
 
   memberships Membership[]
   projects    Project[]
+  timeEntries TimeEntry[]
 
   @@schema("auth")
 }
@@ -37,6 +38,7 @@ model User {
   createdAt    DateTime @default(now())
 
   memberships Membership[]
+  timeEntries TimeEntry[]
 
   @@schema("auth")
 }
@@ -87,8 +89,28 @@ model Project {
   organizationId String
   organization   Organization @relation(fields: [organizationId], references: [id])
 
-  clientId String
-  client   Client @relation(fields: [clientId], references: [id])
+  clientId    String
+  client      Client      @relation(fields: [clientId], references: [id])
+  timeEntries TimeEntry[]
 
   @@schema("core")
+}
+
+model TimeEntry {
+  id          String    @id @default(cuid())
+  startTime   DateTime
+  endTime     DateTime?
+  description String?
+  createdAt   DateTime  @default(now())
+
+  organizationId String
+  organization   Organization @relation(fields: [organizationId], references: [id])
+
+  projectId String
+  project   Project @relation(fields: [projectId], references: [id])
+
+  userId String
+  user   User   @relation(fields: [userId], references: [id])
+
+  @@schema("timetracking")
 }
