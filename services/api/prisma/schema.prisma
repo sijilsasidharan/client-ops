@@ -6,7 +6,7 @@ generator client {
 
 datasource db {
   provider = "postgresql"
-  schemas  = ["auth", "core", "timetracking"]
+  schemas  = ["auth", "core", "timetracking", "billing"]
 }
 
 enum Role {
@@ -25,6 +25,7 @@ model Organization {
   memberships Membership[]
   projects    Project[]
   timeEntries TimeEntry[]
+  invoices    Invoice[]
 
   @@schema("auth")
 }
@@ -63,10 +64,12 @@ model Client {
   name        String
   contactInfo String?
   notes       String?
+  hourlyRate  Decimal?  @db.Decimal(10, 2)
   createdAt   DateTime @default(now())
 
   organizationId String
   projects       Project[]
+  invoices       Invoice[]
 
   @@schema("core")
 }
@@ -109,8 +112,51 @@ model TimeEntry {
   projectId String
   project   Project @relation(fields: [projectId], references: [id])
 
-  userId String
-  user   User   @relation(fields: [userId], references: [id])
+  userId          String
+  user            User             @relation(fields: [userId], references: [id])
+  invoiceLineItem InvoiceLineItem?
 
   @@schema("timetracking")
+}
+
+enum InvoiceStatus {
+  DRAFT
+  SENT
+  PAID
+
+  @@schema("billing")
+}
+
+model Invoice {
+  id          String        @id @default(cuid())
+  status      InvoiceStatus @default(DRAFT)
+  totalAmount Decimal       @db.Decimal(10, 2)
+  issuedAt    DateTime      @default(now())
+  paidAt      DateTime?
+
+  organizationId String
+  organization   Organization @relation(fields: [organizationId], references: [id])
+
+  clientId String
+  client   Client @relation(fields: [clientId], references: [id])
+
+  lineItems InvoiceLineItem[]
+
+  @@schema("billing")
+}
+
+model InvoiceLineItem {
+  id          String  @id @default(cuid())
+  description String
+  hours       Decimal @db.Decimal(10, 2)
+  rate        Decimal @db.Decimal(10, 2)
+  amount      Decimal @db.Decimal(10, 2)
+
+  invoiceId String
+  invoice   Invoice @relation(fields: [invoiceId], references: [id])
+
+  timeEntryId String    @unique
+  timeEntry   TimeEntry @relation(fields: [timeEntryId], references: [id])
+
+  @@schema("billing")
 }

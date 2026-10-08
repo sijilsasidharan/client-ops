@@ -1,5 +1,5 @@
 import { Optional } from '@nestjs/common';
-import { IsString, MinLength } from 'class-validator';
+import { IsNumber, IsString, MinLength } from 'class-validator';
 
 export class CreateClientDto {
   @IsString()
@@ -13,4 +13,7 @@ export class CreateClientDto {
   @Optional()
   @IsString()
   notes: string;
+
+  @IsNumber()
+  hourlyRate: number;
 }

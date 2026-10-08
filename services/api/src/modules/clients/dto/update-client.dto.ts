@@ -1,5 +1,5 @@
 import { Optional } from '@nestjs/common';
-import { IsString, MinLength } from 'class-validator';
+import { IsNumber, IsString, MinLength } from 'class-validator';
 
 export class UpdateClientDto {
   @IsString()
@@ -13,4 +13,8 @@ export class UpdateClientDto {
   @Optional()
   @IsString()
   notes?: string;
+
+  @Optional()
+  @IsNumber()
+  hourlyRate?: number;
 }
