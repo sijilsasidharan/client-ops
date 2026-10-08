@@ -5,6 +5,7 @@ import {
 } from '@nestjs/common';
 import { PrismaService } from '../../prisma/prisma.service';
 import { StartTimerDto } from './dto/start-timer.dto';
+import { CreateManualEntryDto } from './dto/create-manual-entry.dto';
 
 @Injectable()
 export class TimeEntryService {
@@ -77,16 +78,13 @@ export class TimeEntryService {
   }
 
   async createManualEntry(
-    projectId: string,
+    createDto: CreateManualEntryDto,
     organizationId: string,
     userId: string,
-    startTime: Date,
-    endTime: Date,
-    description?: string,
   ) {
     const project = await this.prismaService.project.findFirst({
       where: {
-        id: projectId,
+        id: createDto.projectId,
         organizationId: organizationId,
       },
     });
@@ -99,12 +97,22 @@ export class TimeEntryService {
 
     return this.prismaService.timeEntry.create({
       data: {
-        projectId: projectId,
+        projectId: createDto.projectId,
         organizationId: organizationId,
         userId: userId,
-        startTime: startTime,
-        endTime: endTime,
-        description: description,
+        startTime: createDto.startTime,
+        endTime: createDto.endTime,
+        description: createDto.description,
+      },
+    });
+  }
+
+  async getRunningTimer(organizationId: string, userId: string) {
+    return this.prismaService.timeEntry.findFirst({
+      where: {
+        organizationId: organizationId,
+        userId: userId,
+        endTime: null,
       },
     });
   }
