@@ -19,7 +19,7 @@ export default function LoginPage() {
     mutationFn: login,
     onSuccess: ({ accessToken }) => {
       setToken(accessToken);
-      router.push("/clients");
+      // router.push("/clients");
     },
     onError: (err: any) =>
       form.setError("root", { message: err.message ?? "Login failed" }),
@@ -69,11 +69,7 @@ export default function LoginPage() {
             {form.formState.errors.root.message}
           </p>
         )}
-        <Button
-          type="submit"
-          className="w-full"
-          disabled={mutation.isPending}
-        >
+        <Button type="submit" className="w-full" disabled={mutation.isPending}>
           {mutation.isPending ? "Logging in…" : "Log in"}
         </Button>
       </form>

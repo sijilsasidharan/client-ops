@@ -2,18 +2,15 @@
 
 import { useEffect, useState } from "react";
 import LoginPage from "./login/page";
+import { getToken } from "@/lib/auth";
+import AppSidenav from "@/components/app-sidenav";
 
-export default function Home() {
-  const [health, setHealth] = useState<{ status: string; db: string } | null>(
-    null,
-  );
-  const [error, setError] = useState<string | null>(null);
+export default function Home({ children }: { children: React.ReactNode }) {
+  const [isLoggedIn, setIsLoggedIn] = useState<boolean | null>(null);
 
   useEffect(() => {
-    fetch(`${process.env.NEXT_PUBLIC_API_URL}/health`)
-      .then((res) => res.json())
-      .then(setHealth)
-      .catch((err) => setError(err.message));
+    const token = getToken();
+    setIsLoggedIn(!!token);
   }, []);
 
   return (
@@ -27,7 +24,11 @@ export default function Home() {
       ) : (
         <p>Checking backend…</p>
       )} */}
-      <LoginPage />
+      {isLoggedIn === true ? (
+        <AppSidenav>{children}</AppSidenav>
+      ) : (
+        <LoginPage />
+      )}
     </main>
   );
 }
