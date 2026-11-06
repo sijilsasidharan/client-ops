@@ -19,7 +19,7 @@ export default function LoginPage() {
     mutationFn: login,
     onSuccess: ({ accessToken }) => {
       setToken(accessToken);
-      // router.push("/clients");
+      router.push("/clients");
     },
     onError: (err: any) =>
       form.setError("root", { message: err.message ?? "Login failed" }),

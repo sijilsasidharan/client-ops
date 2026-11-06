@@ -1,12 +1,10 @@
 import { AppHeader } from "@/components/app-header";
+import AppSidenav from "@/components/app-sidenav";
 
 export default function AppLayout({ children }: LayoutProps<"/">) {
   return (
     <>
-      <AppHeader />
-      <main className="mx-auto w-full max-w-6xl flex-1 px-4 py-6">
-        {children}
-      </main>
+      <AppSidenav>{children}</AppSidenav>
     </>
   );
 }

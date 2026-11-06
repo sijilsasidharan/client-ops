@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import LoginPage from "./login/page";
 import { getToken } from "@/lib/auth";
 import AppSidenav from "@/components/app-sidenav";
+import { AppHeader } from "@/components/app-header";
 
 export default function Home({ children }: { children: React.ReactNode }) {
   const [isLoggedIn, setIsLoggedIn] = useState<boolean | null>(null);
@@ -27,7 +28,10 @@ export default function Home({ children }: { children: React.ReactNode }) {
       {isLoggedIn === true ? (
         <AppSidenav>{children}</AppSidenav>
       ) : (
-        <LoginPage />
+        <>
+          <AppHeader />
+          <LoginPage />
+        </>
       )}
     </main>
   );
